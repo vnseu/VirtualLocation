@@ -69,7 +69,7 @@ echo "📦 编译 Swift 源文件..."
 
 # Swift 编译为单一可执行文件
 xcrun -sdk iphoneos swiftc \
-    -target arm64-apple-ios14.0 \
+    -target arm64-apple-ios15.0 \
     -sdk "$SDK_PATH" \
     $SWIFT_FLAGS \
     -framework SwiftUI \
