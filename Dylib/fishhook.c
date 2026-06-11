@@ -32,6 +32,11 @@ typedef struct nlist nlist_t;
 #define SEG_DATA_CONST  "__DATA_CONST"
 #endif
 
+// uint_t is a BSD-ism not in standard C; define it for portability
+#ifndef uint_t
+typedef unsigned int uint_t;
+#endif
+
 struct rebindings_entry {
     struct rebinding *rebindings;
     size_t rebindings_nel;
