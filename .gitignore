@@ -1,0 +1,25 @@
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Build artifacts
+build/
+output/
+*.o
+
+# Xcode
+*.xcworkspace
+*.xcuserdata
+DerivedData/
+*.xcodeproj
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
