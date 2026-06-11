@@ -102,15 +102,16 @@ xcrun -sdk iphoneos clang \
     $MIN_VER \
     -isysroot "$SDK_PATH" \
     -dynamiclib \
-    -install_name "@rpath/VirtualLocation.dylib" \
+    -install_name "@executable_path/VirtualLocation.dylib" \
     -current_version 1.0.0 \
     -compatibility_version 1.0.0 \
     -Xlinker -dead_strip \
     -Xlinker -S \
+    -Xlinker -undefined \
+    -Xlinker dynamic_lookup \
     -fobjc-arc \
     -framework Foundation \
     -framework CoreLocation \
-    -framework UIKit \
     "${OBJ_FILES[@]}" \
     -o "$BUILD_DIR/VirtualLocation.dylib"
 
