@@ -8,42 +8,12 @@
 
 #import "VirtualLocation.h"
 
-// 前置声明
-@interface VLocConfigMonitor : NSObject
-+ (void)startMonitoring;
-@end
-
-__attribute__((constructor))
-static void VirtualLocationLoaderInit(void) {
-    @autoreleasepool {
-        NSLog(@"╔══════════════════════════════════════════╗");
-        NSLog(@"║   🌍 VirtualLocation Dylib v1.0         ║");
-        NSLog(@"║   TrollStore 全局虚拟定位引擎            ║");
-        NSLog(@"╚══════════════════════════════════════════╝");
-
-        // 加载配置
-        VLocConfig cfg = VLocConfigLoad();
-
-        // 安装 CoreLocation Hook
-        VLocHookInstall();
-
-        // 注册通知：监控配置文件变化（热更新支持）
-        [VLocConfigMonitor startMonitoring];
-
-        if (cfg.enabled) {
-            NSLog(@"[VirtualLocation] ✅ 已激活！目标位置: (%.6f, %.6f)",
-                  cfg.latitude, cfg.longitude);
-        } else {
-            NSLog(@"[VirtualLocation] ⚠️ 未启用，请通过 VirtualLocation App 设置目标位置");
-        }
-    }
-}
-
 // ============================================================
 //  配置文件变化监控（热更新）
 // ============================================================
 
 @interface VLocConfigMonitor : NSObject
++ (void)startMonitoring;
 @end
 
 @implementation VLocConfigMonitor
@@ -87,3 +57,33 @@ static void VirtualLocationLoaderInit(void) {
 }
 
 @end
+
+// ============================================================
+//  Dylib 入口
+// ============================================================
+
+__attribute__((constructor))
+static void VirtualLocationLoaderInit(void) {
+    @autoreleasepool {
+        NSLog(@"╔══════════════════════════════════════════╗");
+        NSLog(@"║   🌍 VirtualLocation Dylib v1.0         ║");
+        NSLog(@"║   TrollStore 全局虚拟定位引擎            ║");
+        NSLog(@"╚══════════════════════════════════════════╝");
+
+        // 加载配置
+        VLocConfig cfg = VLocConfigLoad();
+
+        // 安装 CoreLocation Hook
+        VLocHookInstall();
+
+        // 注册通知：监控配置文件变化（热更新支持）
+        [VLocConfigMonitor startMonitoring];
+
+        if (cfg.enabled) {
+            NSLog(@"[VirtualLocation] ✅ 已激活！目标位置: (%.6f, %.6f)",
+                  cfg.latitude, cfg.longitude);
+        } else {
+            NSLog(@"[VirtualLocation] ⚠️ 未启用，请通过 VirtualLocation App 设置目标位置");
+        }
+    }
+}
