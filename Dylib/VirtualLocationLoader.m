@@ -64,26 +64,22 @@
 
 __attribute__((constructor))
 static void VirtualLocationLoaderInit(void) {
-    @autoreleasepool {
-        NSLog(@"╔══════════════════════════════════════════╗");
-        NSLog(@"║   🌍 VirtualLocation Dylib v1.0         ║");
-        NSLog(@"║   TrollStore 全局虚拟定位引擎            ║");
-        NSLog(@"╚══════════════════════════════════════════╝");
+    @try {
+        @autoreleasepool {
+            NSLog(@"[VirtualLocation] Dylib loaded, initializing...");
 
-        // 加载配置
-        VLocConfig cfg = VLocConfigLoad();
+            VLocConfig cfg = VLocConfigLoad();
+            VLocHookInstall();
+            [VLocConfigMonitor startMonitoring];
 
-        // 安装 CoreLocation Hook
-        VLocHookInstall();
-
-        // 注册通知：监控配置文件变化（热更新支持）
-        [VLocConfigMonitor startMonitoring];
-
-        if (cfg.enabled) {
-            NSLog(@"[VirtualLocation] ✅ 已激活！目标位置: (%.6f, %.6f)",
-                  cfg.latitude, cfg.longitude);
-        } else {
-            NSLog(@"[VirtualLocation] ⚠️ 未启用，请通过 VirtualLocation App 设置目标位置");
+            if (cfg.enabled) {
+                NSLog(@"[VirtualLocation] Active: (%.6f, %.6f)",
+                      cfg.latitude, cfg.longitude);
+            } else {
+                NSLog(@"[VirtualLocation] Disabled, set location via app");
+            }
         }
+    } @catch (NSException *e) {
+        NSLog(@"[VirtualLocation] Init failed (app continues): %@", e);
     }
 }
