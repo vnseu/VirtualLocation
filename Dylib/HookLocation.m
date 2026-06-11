@@ -17,10 +17,19 @@
 #import <objc/message.h>
 
 // ============================================================
-//  前置声明 — Category 方法在下方实现，此处声明让编译器可见
+//  前置声明 — 下面的类/分类在文件后方完整定义，此处提前告知编译器
 // ============================================================
 
-@interface VLocFakeLocation (Factory)
+@class VLocFakeLocation;
+
+@interface VLocFakeLocation : CLLocation
+@property (nonatomic, assign) CLLocationCoordinate2D fakeCoordinate;
+@property (nonatomic, assign) CLLocationDistance fakeAltitude;
+@property (nonatomic, assign) CLLocationAccuracy fakeHorizontalAccuracy;
+@property (nonatomic, assign) CLLocationAccuracy fakeVerticalAccuracy;
+@property (nonatomic, assign) CLLocationSpeed fakeSpeed;
+@property (nonatomic, assign) CLLocationDirection fakeCourse;
+@property (nonatomic, strong) NSDate *fakeTimestamp;
 + (instancetype)vl_fakeLocationWithConfig:(VLocConfig)cfg;
 @end
 
@@ -33,16 +42,6 @@
 // ============================================================
 //  伪造的 CLLocation 子类（避免创建真实对象时的坐标覆盖）
 // ============================================================
-
-@interface VLocFakeLocation : CLLocation
-@property (nonatomic, assign) CLLocationCoordinate2D fakeCoordinate;
-@property (nonatomic, assign) CLLocationDistance fakeAltitude;
-@property (nonatomic, assign) CLLocationAccuracy fakeHorizontalAccuracy;
-@property (nonatomic, assign) CLLocationAccuracy fakeVerticalAccuracy;
-@property (nonatomic, assign) CLLocationSpeed fakeSpeed;
-@property (nonatomic, assign) CLLocationDirection fakeCourse;
-@property (nonatomic, strong) NSDate *fakeTimestamp;
-@end
 
 @implementation VLocFakeLocation
 
@@ -257,12 +256,6 @@ static void hooked_CLLocationManager_setDelegate(id self, SEL _cmd, id delegate)
 // ============================================================
 //  CLLocationManager Category — 辅助方法
 // ============================================================
-
-@interface CLLocationManager (VirtualLocation)
-- (void)vl_injectFakeLocations:(id)delegate;
-- (void)vl_swizzleDelegate:(id)delegate;
-- (id)vl_originalDelegate;
-@end
 
 @implementation CLLocationManager (VirtualLocation)
 
