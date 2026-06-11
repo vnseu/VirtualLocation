@@ -37,13 +37,19 @@ jobs:
       # ---------- 安装依赖 ----------
       - name: Install ldid
         run: |
-          brew install ldid
-          echo "ldid version: $(ldid 2>&1 | head -1 || echo ok)"
-
-      - name: Install insert_dylib
-        run: |
-          brew install insert_dylib
-          echo "insert_dylib: $(which insert_dylib)"
+          # Try homebrew first, fallback to direct download
+          if brew install ldid 2>/dev/null; then
+            echo "ldid installed via brew"
+          else
+            echo "brew failed, downloading ldid from GitHub..."
+            LDID_VER="2.1.5-procursus7"
+            curl -fsSL "https://github.com/ProcursusTeam/ldid/releases/download/v${LDID_VER}/ldid_${LDID_VER}_macOS_x86_64.tar.xz" -o ldid.tar.xz
+            tar -xf ldid.tar.xz
+            chmod +x ldid
+            sudo mv ldid /usr/local/bin/
+            echo "ldid installed from GitHub release"
+          fi
+          echo "ldid: $(which ldid)"
 
       - name: Show Xcode info
         run: |
