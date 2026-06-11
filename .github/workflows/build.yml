@@ -1,0 +1,107 @@
+name: Build VirtualLocation (Dylib + IPA)
+
+# ============================================================
+#  GitHub Actions — macOS 免费构建
+#
+#  每次 push 到 main 或手动触发 workflow_dispatch
+#  自动构建 VirtualLocation.dylib 和 VirtualLocation.ipa
+#  产物作为 artifact 下载
+#
+#  用法:
+#    1. Fork 此仓库
+#    2. Push 代码 → 自动构建
+#    3. 在 Actions 页面下载 artifact
+#
+#  或手动触发:
+#    Actions → Build VirtualLocation → Run workflow
+# ============================================================
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Dylib/**'
+      - 'App/**'
+      - 'Scripts/**'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  build:
+    runs-on: macos-latest  # 免费的 macOS runner
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ---------- 安装依赖 ----------
+      - name: Install ldid
+        run: |
+          brew install ldid
+          echo "ldid version: $(ldid 2>&1 | head -1 || echo ok)"
+
+      - name: Install insert_dylib
+        run: |
+          brew install insert_dylib
+          echo "insert_dylib: $(which insert_dylib)"
+
+      - name: Show Xcode info
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          swift --version
+
+      # ---------- 构建 Dylib ----------
+      - name: Build VirtualLocation.dylib
+        run: |
+          chmod +x Scripts/build_dylib.sh
+          bash Scripts/build_dylib.sh release
+          echo "=== DYLIB INFO ==="
+          ls -lh output/VirtualLocation.dylib
+          file output/VirtualLocation.dylib
+          echo "=== LINKED LIBS ==="
+          otool -L output/VirtualLocation.dylib || true
+
+      # ---------- 构建 App + IPA ----------
+      - name: Build VirtualLocation.ipa
+        run: |
+          chmod +x Scripts/build_app.sh
+          bash Scripts/build_app.sh ipa
+          echo "=== IPA INFO ==="
+          ls -lh output/VirtualLocation.ipa
+          echo "=== APP SIZE ==="
+          du -sh build/App/VirtualLocation.app || true
+
+      # ---------- 上传产物 ----------
+      - name: Upload Dylib (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: VirtualLocation.dylib
+          path: output/VirtualLocation.dylib
+          retention-days: 90
+
+      - name: Upload IPA (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: VirtualLocation.ipa
+          path: output/VirtualLocation.ipa
+          retention-days: 90
+
+      - name: Upload all outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: VirtualLocation-all
+          path: |
+            output/VirtualLocation.dylib
+            output/VirtualLocation.ipa
+          retention-days: 90
+
+      # ---------- 创建 Release (仅在 tag push 时) ----------
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            output/VirtualLocation.dylib
+            output/VirtualLocation.ipa
+          generate_release_notes: true
