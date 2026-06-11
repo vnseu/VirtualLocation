@@ -17,6 +17,20 @@
 #import <objc/message.h>
 
 // ============================================================
+//  前置声明 — Category 方法在下方实现，此处声明让编译器可见
+// ============================================================
+
+@interface VLocFakeLocation (Factory)
++ (instancetype)vl_fakeLocationWithConfig:(VLocConfig)cfg;
+@end
+
+@interface CLLocationManager (VirtualLocation)
+- (void)vl_injectFakeLocations:(id)delegate;
+- (void)vl_swizzleDelegate:(id)delegate;
+- (id)vl_originalDelegate;
+@end
+
+// ============================================================
 //  伪造的 CLLocation 子类（避免创建真实对象时的坐标覆盖）
 // ============================================================
 
