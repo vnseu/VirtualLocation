@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- TrollStore 核心权限：绕过签名验证 -->
+	<key>platform-application</key>
+	<true/>
+
+	<!-- 允许加载未签名 dylib -->
+	<key>com.apple.private.skip-library-validation</key>
+	<true/>
+
+	<!-- 允许动态代码签名 -->
+	<key>dynamic-codesigning</key>
+	<true/>
+
+	<!-- 允许调试（get-task-allow） -->
+	<key>get-task-allow</key>
+	<true/>
+
+	<!-- 允许访问全文件系统 -->
+	<key>com.apple.private.security.no-sandbox</key>
+	<true/>
+
+	<!-- 允许读取其他应用的容器 -->
+	<key>com.apple.private.security.container-required</key>
+	<false/>
+
+	<!-- App Group 共享 -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.virtuallocation.shared</string>
+	</array>
+</dict>
+</plist>
