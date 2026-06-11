@@ -8,6 +8,11 @@
 
 #import "VirtualLocation.h"
 
+// 前置声明
+@interface VLocConfigMonitor : NSObject
++ (void)startMonitoring;
+@end
+
 __attribute__((constructor))
 static void VirtualLocationLoaderInit(void) {
     @autoreleasepool {
