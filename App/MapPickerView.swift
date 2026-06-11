@@ -32,9 +32,6 @@ struct MapPickerView: View {
                 annotationItems: annotationItems) { item in
                 MapMarker(coordinate: item.coordinate, tint: .red)
             }
-            .onTapGesture { point in
-                // 简化：点击地图中心坐标
-            }
             .onChange(of: region.center.latitude) { _ in
                 updateFromRegion()
             }
